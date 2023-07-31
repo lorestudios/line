@@ -15,8 +15,8 @@ c := line.DefaultConfig()
 l := line.New(c, encoding.NewNBTEncoder(pool))
 
 // Publish a packet
-data, _ := nats.WritePacket(&ExamplePacket{})
-_ = nats.Conn().Publish("subject", data)
+data, _ := l.WritePacket(&ExamplePacket{})
+_ = l.Conn().Publish("subject", data)
 ```
 
 # Packets
