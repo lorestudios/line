@@ -19,11 +19,11 @@ type Consumer struct {
 }
 
 // NewConsumer returns a new Consumer ready to use with the required data.
-func NewConsumer(l *Line, s string, h *protocol.Handlers) *Consumer {
+func NewConsumer(l *Line, subject string, handlers *protocol.Handlers) *Consumer {
 	return &Consumer{
 		line:     l,
-		subject:  s,
-		handlers: h,
+		subject:  subject,
+		handlers: handlers,
 		channel:  make(chan *nats.Msg, 64),
 	}
 }
