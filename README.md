@@ -21,7 +21,7 @@ _ = l.Conn().Publish("subject", data)
 
 # Packets
 
-Communication is over packets using gophertunnel's packet implementation. Line comes with a packet handler registry
+Communication is over packets using [gophertunnel](https://github.com/Sandertv/gophertunnel)'s packet implementation. Line comes with a packet handler registry
 too, though the responsibility to handle packet read/writes is on the user.
 
 ### Packet Pool
@@ -50,16 +50,16 @@ For ease of use, line comes with a client and consumer implementation.
 ### Client
 ```go
 // create a new client
-client := client.NewClient(line, "wild-1", handlers)
+client := client.NewClient(line, "client-subject", handlers)
 defer client.Close()
 err := client.Start()
 
 // Send data to another service.
-err = client.Send("poet", &ExamplePacket{})
+err = client.Send("other-service-subject", &ExamplePacket{})
 
 // Request data from another service.
 // resp is a packet.Packet as well
-resp, err := client.Request("poet", &ExampleRequestPacket{})
+resp, err := client.Request("other-service-subject", &ExampleRequestPacket{})
 fmt.Println(resp.(*ExampleResponsePacket).Data)
 
 // Respond to data from another service.
