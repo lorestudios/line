@@ -50,7 +50,9 @@ For ease of use, line comes with a client and consumer implementation.
 ### Client
 ```go
 // create a new client
-client := client.NewClient(line, "client-subject", handlers)
+// queue can be left empty if you don't want to use a queue. 
+// read more about queues here: https://docs.nats.io/nats-concepts/queue
+client := client.NewClient(line, "client-subject", "client-queue", handlers)
 defer client.Close()
 err := client.Start()
 

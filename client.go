@@ -14,9 +14,9 @@ type Client struct {
 }
 
 // NewClient returns a new Client ready to use with the required data.
-func NewClient(l *Line, subject string, handlers *protocol.Handlers) *Client {
+func NewClient(l *Line, subject, queue string, handlers *protocol.Handlers) *Client {
 	return &Client{
-		Consumer: NewConsumer(l, subject, handlers),
+		Consumer: NewConsumer(l, subject, queue, handlers),
 	}
 }
 

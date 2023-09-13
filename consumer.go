@@ -12,6 +12,7 @@ import (
 type Consumer struct {
 	line     *Line
 	subject  string
+	queue    string
 	handlers *protocol.Handlers
 
 	sub     *nats.Subscription
@@ -19,10 +20,11 @@ type Consumer struct {
 }
 
 // NewConsumer returns a new Consumer ready to use with the required data.
-func NewConsumer(l *Line, subject string, handlers *protocol.Handlers) *Consumer {
+func NewConsumer(l *Line, subject, queue string, handlers *protocol.Handlers) *Consumer {
 	return &Consumer{
 		line:     l,
 		subject:  subject,
+		queue:    queue,
 		handlers: handlers,
 		channel:  make(chan *nats.Msg, 64),
 	}
@@ -52,12 +54,23 @@ func (r *Consumer) Close() {
 
 // Start subscribes to the subject and starts reading and handling packets from it.
 func (r *Consumer) Start() error {
-	sub, err := r.line.Conn().ChanSubscribe(r.subject, r.channel)
-	if err != nil {
-		logrus.Errorf("could not subscribe to subject %s: %v", r.subject, err)
-		return err
+	var sub *nats.Subscription
+	var err error
+	if r.queue != "" {
+		sub, err = r.line.Conn().ChanQueueSubscribe(r.subject, r.queue, r.channel)
+		if err != nil {
+			logrus.Errorf("could not subscribe to subject %s: %v", r.subject, err)
+			return err
+		}
+		r.sub = sub
+	} else {
+		sub, err = r.line.Conn().ChanSubscribe(r.subject, r.channel)
+		if err != nil {
+			logrus.Errorf("could not subscribe to subject %s: %v", r.subject, err)
+			return err
+		}
+		r.sub = sub
 	}
-	r.sub = sub
 
 	defer r.Close()
 	for {
